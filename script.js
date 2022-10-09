@@ -16,6 +16,7 @@ context = canvas.getContext("2d");
 
 create_balls();
 // set up interval (game loop)
+update();
 btn.addEventListener("click", function() {
     if (interval === null) {
         interval = setInterval(update, 1000 / FPS);
@@ -32,15 +33,15 @@ function update() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     balls.forEach(draw_balls);
     balls.sort((a, b) => a[0][0] - b[0][0]);
-    collision();
+    collision_manager();
     balls.map(mutate_balls);
 }
 
-function collision() {
+function collision_manager() {
     let collisions, x_intersections;
-    x_intersections = check_x_intersection();
+    x_intersections = collect_x_intersection();
     if (x_intersections.length > 0) {
-        collisions = check_collision(x_intersections);
+        collisions = examine_x_intersections(x_intersections);
         if (collisions) {
             resolve_collisions(collisions);
         }
@@ -49,7 +50,7 @@ function collision() {
     }
 }
 
-function check_x_intersection() {
+function collect_x_intersection() {
     let intersections = [];
     let inter_i = 0;
 
@@ -72,13 +73,20 @@ function check_x_intersection() {
     return intersections;
 }
 
-function check_collision(x_intersections) {
+//https://www.youtube.com/watch?v=f1zLSpzCh9E
+function examine_x_intersections(x_intersections) {
     let coll_return = [];
-    x_intersections.forEach(function(arr) {
-        let coll_tmp = check_collision_helper(arr);
-        if (coll_tmp) {
-            coll_return = coll_return.concat(coll_tmp);
-        }
+    x_intersections.forEach(function(x_inters_sub) {
+        x_inters_sub.forEach(function(key, index, sub_arr) {
+            for (let i = index + 1; i < sub_arr.length; i++) {
+                let key2 = sub_arr[i];
+                if (balls[key2]) {
+                    if (verify_collision(balls[key], balls[key2])) {
+                        coll_return.push([key, key2]);
+                    }
+                }
+            }
+        });
     });
     if (coll_return.length === 0) {
         return false;
@@ -86,27 +94,20 @@ function check_collision(x_intersections) {
     return coll_return;
 }
 
-function check_collision_helper(arr_in) {
-    // arr_in array of arrays with keys for balls for points in x collission range
-    let arr_return = [];
-    arr_in.forEach(function(key, index, arr) {
-        for (let i = index + 1; i < arr.length; i++) {
-            if (balls[arr[i]]) {
-                let b1x = balls[key][0][0];
-                let b1y = balls[key][0][1];
-                let b2x = balls[arr[i]][0][0];
-                let b2y = balls[arr[i]][0][1];
-                let dist = Math.sqrt((b1x - b2x) ** 2 + (b1y - b2y) ** 2);
-                if (dist >= 0 && dist <= ball_size * 2 - 1) {
-                    arr_return.push([key, arr[i]]);
-                }
-            }
-        }
-    });
-    if (arr_return.length === 0) {
         return false;
+function verify_collision(ball1, ball2) {
+    const b1x = ball1[0][0];
+    const b1y = ball1[0][1];
+    const b1s = ball1[2][0];
+    const b2x = ball2[0][0];
+    const b2y = ball2[0][1];
+    const b2s = ball2[2][0];
+    const max_dist = b1s + b2s;
+    const dist = Math.sqrt((b1x - b2x) ** 2 + (b1y - b2y) ** 2);
+    if (dist >= 0 && dist <= max_dist - 1) {
+        return true;
     }
-    return arr_return;
+    return false;
 }
 
 // https://www.vobarian.com/collisions/2dcollisions2.pdf
@@ -114,10 +115,10 @@ function resolve_collisions(coll_in) {
     coll_in.forEach(function(coll) {
         let b1 = balls[coll[0]];
         let b1v0 = b1[1];
-        let b1m = 1;
+        let b1m = b1[2][0];
         let b2 = balls[coll[1]];
         let b2v0 = b2[1];
-        let b2m = 1;
+        let b2m = b2[2][0];
         let normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
         let normal_magnitute = Math.sqrt(normal[0]**2 + normal[1]**2);
         let un = normal.map(val => val / normal_magnitute);
@@ -172,12 +173,7 @@ function draw_balls(ball) {
 
 function create_balls() {
     for (let i = 0; i < ball_count; i++) {
-        let bx, by, xv, yv, color;
-        // ball starting position
-
-        let min = ball_size * 2;
-        bx = Math.random() * (c_width - min - min) + min;
-        by = Math.random() * (c_height - min - min) + min;
+        let new_ball, bx, by, xv, yv, bs, color;
 
         // random ball starting speed (between 25 and 100 pps)
         xv = Math.random() * speed_max + speed_min;
@@ -191,7 +187,21 @@ function create_balls() {
             yv = -yv;
         }
         color = rand_color();
-        balls.push([[bx, by], [xv, yv], "#00FF00"]);
+        let min = bs * 2;
+        while (true) {
+            bx = Math.random() * (c_width - min - min) + min;
+            by = Math.random() * (c_height - min - min) + min;
+            new_ball = [[bx, by], [xv, yv], [bs, "#0000FF"]];
+            if (balls.length === 0) {
+                balls.push(new_ball);
+                break;
+            }
+            let coll_tmp = balls.filter(ball1 => verify_collision(ball1, new_ball));
+            if (coll_tmp.length === 0) {
+                balls.push(new_ball);
+                break;
+            }
+        }
     }
 }
 
