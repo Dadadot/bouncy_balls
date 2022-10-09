@@ -1,9 +1,8 @@
 // declare variables
 const FPS = 60;
-const bs_max = 20;
-const bs_min = 5;
-const ball_count = 50;
-const speed_max = 2;
+const ball_size = 10;
+const ball_count = 10;
+const speed_max = 1;
 const speed_min = 0.4;
 let balls = [];
 let canvas, context;
@@ -63,12 +62,9 @@ function check_x_intersection() {
             return;
         }
         const b1x = ball[0][0];
-        const b1s = ball[2][0];
         const b2x = balls[index + 1][0][0];
-        const b2s = balls[index + 1][2][0];
-        const max_dist = b1s + b2s;
         const dist = Math.abs(b1x - b2x);
-        if (!(dist >= 0 && dist <= max_dist * 2)) {
+        if (!(dist >= 0 && dist <= ball_size * 2)) {
             inter_i += 1;
         }
     });
@@ -96,15 +92,12 @@ function check_collision_helper(arr_in) {
     arr_in.forEach(function(key, index, arr) {
         for (let i = index + 1; i < arr.length; i++) {
             if (balls[arr[i]]) {
-                const b1x = balls[key][0][0];
-                const b1y = balls[key][0][1];
-                const b1s = balls[key][2][0];
-                const b2x = balls[arr[i]][0][0];
-                const b2y = balls[arr[i]][0][1];
-                const b2s = balls[arr[i]][2][0];
-                const max_dist = b1s + b2s;
-                const dist = Math.sqrt((b1x - b2x) ** 2 + (b1y - b2y) ** 2);
-                if (dist >= 0 && dist <= max_dist * 2 - 1) {
+                let b1x = balls[key][0][0];
+                let b1y = balls[key][0][1];
+                let b2x = balls[arr[i]][0][0];
+                let b2y = balls[arr[i]][0][1];
+                let dist = Math.sqrt((b1x - b2x) ** 2 + (b1y - b2y) ** 2);
+                if (dist >= 0 && dist <= ball_size * 2 - 1) {
                     arr_return.push([key, arr[i]]);
                 }
             }
@@ -126,7 +119,7 @@ function resolve_collisions(coll_in) {
         let b2v0 = b2[1];
         let b2m = 1;
         let normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
-        let normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
+        let normal_magnitute = Math.sqrt(normal[0]**2 + normal[1]**2);
         let un = normal.map(val => val / normal_magnitute);
         let ut = [-un[1], un[0]];
         let b1vn0 = un[0] * b1v0[0] + un[1] * b1v0[1];
@@ -149,19 +142,18 @@ function resolve_collisions(coll_in) {
 function mutate_balls(ball) {
     let [bx, by] = ball[0];
     let [xv, yv] = ball[1];
-    const bs = ball[2][0];
     bx = bx + xv;
     by = by + yv;
-    if (bx - bs < 0 && xv < 0) {
+    if (bx - ball_size < 0 && xv < 0) {
         xv = -xv;
     }
-    if (bx + bs > canvas.width && xv > 0) {
+    if (bx + ball_size > canvas.width && xv > 0) {
         xv = -xv;
     }
-    if (by - bs < 0 && yv < 0) {
+    if (by - ball_size < 0 && yv < 0) {
         yv = -yv;
     }
-    if (by + bs > canvas.height && yv > 0) {
+    if (by + ball_size > canvas.height && yv > 0) {
         yv = -yv;
     }
     ball[0] = [bx, by];
@@ -171,21 +163,19 @@ function mutate_balls(ball) {
 
 function draw_balls(ball) {
     let [bx, by] = ball[0];
-    let color = ball[2][1];
-    let bs = ball[2][0];
+    let color = ball[2];
     context.beginPath();
     context.fillStyle = color;
-    context.arc(bx, by, bs, 0, 2 * Math.PI, false);
+    context.arc(bx, by, ball_size, 0, 2 * Math.PI, false);
     context.fill();
 }
 
 function create_balls() {
     for (let i = 0; i < ball_count; i++) {
-        let bx, by, xv, yv, bs, color;
+        let bx, by, xv, yv, color;
         // ball starting position
-        bs = Math.random() * (bs_max - bs_min) + bs_min;
 
-        let min = bs * 2;
+        let min = ball_size * 2;
         bx = Math.random() * (c_width - min - min) + min;
         by = Math.random() * (c_height - min - min) + min;
 
@@ -201,7 +191,7 @@ function create_balls() {
             yv = -yv;
         }
         color = rand_color();
-        balls.push([[bx, by], [xv, yv], [bs, color]]);
+        balls.push([[bx, by], [xv, yv], "#00FF00"]);
     }
 }
 
