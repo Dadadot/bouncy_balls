@@ -15,7 +15,7 @@ let interval = null;
 
 create_balls();
 update();
-btn.addEventListener("click", function() {
+btn.addEventListener("click", function () {
     if (interval === null) {
         interval = setInterval(update, 1000 / FPS);
     } else {
@@ -50,7 +50,7 @@ function collect_x_intersection() {
     let intersections = [];
     let inter_i = 0;
 
-    balls.forEach(function(ball, index) {
+    balls.forEach(function (ball, index) {
         if (!intersections[inter_i]) {
             intersections[inter_i] = [];
         }
@@ -75,8 +75,8 @@ function collect_x_intersection() {
 //https://www.youtube.com/watch?v=f1zLSpzCh9E
 function examine_x_intersections(x_intersections) {
     let coll_return = [];
-    x_intersections.forEach(function(x_inters_sub) {
-        x_inters_sub.forEach(function(key, index, sub_arr) {
+    x_intersections.forEach(function (x_inters_sub) {
+        x_inters_sub.forEach(function (key, index, sub_arr) {
             for (let i = index + 1; i < sub_arr.length; i++) {
                 let key2 = sub_arr[i];
                 if (balls[key2]) {
@@ -110,7 +110,7 @@ function verify_collision(ball1, ball2) {
 
 // https://www.vobarian.com/collisions/2dcollisions2.pdf
 function resolve_collision(coll_in) {
-    coll_in.forEach(function(coll) {
+    coll_in.forEach(function (coll) {
         const b1 = balls[coll[0]];
         const b1v0 = b1[1];
         const b1m = b1[2][0];
@@ -119,7 +119,7 @@ function resolve_collision(coll_in) {
         const b2m = b2[2][0];
         const normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
         const normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
-        const un = normal.map(val => val / normal_magnitute);
+        const un = normal.map((val) => val / normal_magnitute);
         const ut = [-un[1], un[0]];
         const b1vn0 = un[0] * b1v0[0] + un[1] * b1v0[1];
         const b1vt0 = ut[0] * b1v0[0] + ut[1] * b1v0[1];
@@ -129,10 +129,10 @@ function resolve_collision(coll_in) {
         let b2vt1 = b2vt0;
         let b1vn1 = (b1vn0 * (b1m - b2m) + 2 * b2m * b2vn0) / (b1m + b2m);
         let b2vn1 = (b2vn0 * (b2m - b1m) + 2 * b1m * b1vn0) / (b1m + b2m);
-        b1vn1 = un.map(val => val * b1vn1);
-        b1vt1 = ut.map(val => val * b1vt1);
-        b2vn1 = un.map(val => val * b2vn1);
-        b2vt1 = ut.map(val => val * b2vt1);
+        b1vn1 = un.map((val) => val * b1vn1);
+        b1vt1 = ut.map((val) => val * b1vt1);
+        b2vn1 = un.map((val) => val * b2vn1);
+        b2vt1 = ut.map((val) => val * b2vt1);
         b1[1] = b1vn1.map((val, i) => val + b1vt1[i]);
         b2[1] = b2vn1.map((val, i) => val + b2vt1[i]);
     });
@@ -170,10 +170,10 @@ function draw_balls(ball) {
     context.fillStyle = color;
     context.arc(bx, by, bs, 0, 2 * Math.PI, false);
     context.fill();
-    context.stroke();
-    // context.fillStyle = 'black';
-    // context.textAlign = 'center';
-    // context.fillText("Ball", bx, by);
+    // empty text string because strange flickering without
+    context.fillStyle = "black";
+    context.textAlign = "center";
+    context.fillText("", bx, by);
 }
 
 function create_balls() {
@@ -193,12 +193,18 @@ function create_balls() {
         while (true) {
             bx = Math.random() * (c_width - min - min) + min;
             by = Math.random() * (c_height - min - min) + min;
-            new_ball = [[bx, by], [xv, yv], [bs, color]];
+            new_ball = [
+                [bx, by],
+                [xv, yv],
+                [bs, color, i],
+            ];
             if (balls.length === 0) {
                 balls.push(new_ball);
                 break;
             }
-            let coll_tmp = balls.filter(ball1 => verify_collision(ball1, new_ball));
+            let coll_tmp = balls.filter((ball1) =>
+                verify_collision(ball1, new_ball)
+            );
             if (coll_tmp.length === 0) {
                 balls.push(new_ball);
                 break;
