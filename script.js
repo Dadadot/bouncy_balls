@@ -1,8 +1,8 @@
 const FPS = 60;
-const bs_max = 20;
+const bs_max = 30;
 const bs_min = 5;
 const ball_count = 20;
-const speed_max = 0.5;
+const speed_max = 1;
 const speed_min = 0.2;
 const grav = 0.05;
 const btn = document.querySelector("#ss_button");
@@ -13,16 +13,19 @@ const context = canvas.getContext("2d");
 let balls = [];
 let interval = null;
 
-create_balls();
-update();
-btn.addEventListener("click", function () {
-    if (interval === null) {
-        interval = setInterval(update, 1000 / FPS);
-    } else {
-        clearInterval(interval);
-        interval = null;
-    }
-});
+function main() {
+    create_balls();
+    update();
+    console.log(balls);
+    btn.addEventListener("click", function () {
+        if (interval === null) {
+            interval = setInterval(update, 1000 / FPS);
+        } else {
+            clearInterval(interval);
+            interval = null;
+        }
+    });
+}
 
 function update() {
     context.fillStyle = "black";
@@ -170,10 +173,9 @@ function draw_balls(ball) {
     context.fillStyle = color;
     context.arc(bx, by, bs, 0, 2 * Math.PI, false);
     context.fill();
-    // empty text string because strange flickering without
-    context.fillStyle = "black";
-    context.textAlign = "center";
-    context.fillText("", bx, by);
+    // context.fillStyle = "red";
+    // context.textAlign = "center";
+    // context.fillText("", bx, by);
 }
 
 function create_balls() {
@@ -214,8 +216,14 @@ function create_balls() {
 }
 
 function rand_color() {
-    const r = Math.floor(Math.random() * 256).toString(16);
-    const g = Math.floor(Math.random() * 256).toString(16);
-    const b = Math.floor(Math.random() * 256).toString(16);
+    let r = Math.floor(Math.random() * 256).toString(16);
+    let g = Math.floor(Math.random() * 256).toString(16);
+    let b = Math.floor(Math.random() * 256).toString(16);
+    r = ("0" + r).slice(-2);
+    g = ("0" + g).slice(-2);
+    b = ("0" + b).slice(-2);
     return ["#", r, g, b].join("");
 }
+
+
+main();
