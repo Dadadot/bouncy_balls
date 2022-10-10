@@ -170,6 +170,7 @@ function draw_balls(ball) {
     context.fillStyle = color;
     context.arc(bx, by, bs, 0, 2 * Math.PI, false);
     context.fill();
+    context.stroke();
     // context.fillStyle = 'black';
     // context.textAlign = 'center';
     // context.fillText("Ball", bx, by);
