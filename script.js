@@ -1,9 +1,10 @@
 const FPS = 60;
 const bs_max = 20;
-const bs_min = 10;
-const ball_count = 100;
+const bs_min = 5;
+const ball_count = 20;
 const speed_max = 0.5;
 const speed_min = 0.2;
+const grav = 0.05;
 const btn = document.querySelector("#ss_button");
 const canvas = document.getElementById("gameCanvas");
 const c_width = canvas.width;
@@ -141,6 +142,7 @@ function mutate_ball(ball) {
     let [bx, by] = ball[0];
     let [xv, yv] = ball[1];
     const bs = ball[2][0];
+    yv -= grav;
     bx = bx + xv;
     by = by + yv;
     if (bx - bs < 0 && xv < 0) {
@@ -150,7 +152,7 @@ function mutate_ball(ball) {
         xv = -xv;
     }
     if (by - bs < 0 && yv < 0) {
-        yv = -yv;
+        yv = -(yv - grav);
     }
     if (by + bs > canvas.height && yv > 0) {
         yv = -yv;
@@ -168,6 +170,9 @@ function draw_balls(ball) {
     context.fillStyle = color;
     context.arc(bx, by, bs, 0, 2 * Math.PI, false);
     context.fill();
+    // context.fillStyle = 'black';
+    // context.textAlign = 'center';
+    // context.fillText("Ball", bx, by);
 }
 
 function create_balls() {
@@ -187,7 +192,7 @@ function create_balls() {
         while (true) {
             bx = Math.random() * (c_width - min - min) + min;
             by = Math.random() * (c_height - min - min) + min;
-            new_ball = [[bx, by], [xv, yv], [bs, "#0000FF"]];
+            new_ball = [[bx, by], [xv, yv], [bs, color]];
             if (balls.length === 0) {
                 balls.push(new_ball);
                 break;
