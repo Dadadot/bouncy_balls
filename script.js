@@ -216,14 +216,13 @@ function create_balls() {
 }
 
 function rand_color() {
-    let r = Math.floor(Math.random() * 256).toString(16);
-    let g = Math.floor(Math.random() * 256).toString(16);
-    let b = Math.floor(Math.random() * 256).toString(16);
-    r = ("0" + r).slice(-2);
-    g = ("0" + g).slice(-2);
-    b = ("0" + b).slice(-2);
-    return ["#", r, g, b].join("");
+    let rgb = [];
+    for (let i = 0; i < 3; i++) {
+        rgb.push(Math.floor(Math.random() * 256).toString(16));
+    }
+    rgb = rgb.map((val) => ("0" + val).slice(-2));
+    rgb.splice(0, 0, "#");
+    return rgb.join("");
 }
-
 
 main();
