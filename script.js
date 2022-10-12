@@ -5,11 +5,18 @@ const ball_count = 20;
 const speed_max = 1;
 const speed_min = 0.2;
 const grav = 0.05;
-const btn = document.querySelector("#ss_button");
+const start_pause_b = document.querySelector("#ss_button");
+const rewind_b = document.querySelector("#rewind");
+const forward_b = document.querySelector("#forward");
+const one_frame_back_b = document.querySelector("#one_frame_back");
+const one_frame_forward_b = document.querySelector("#one_frame_forward");
 const canvas = document.getElementById("gameCanvas");
 const c_width = canvas.width;
 const c_height = canvas.height;
 const context = canvas.getContext("2d");
+let history_position = false;
+let state = null;
+let history = [];
 let balls = [];
 let interval = null;
 
@@ -17,7 +24,7 @@ function main() {
     create_balls();
     update();
     console.log(balls);
-    btn.addEventListener("click", function () {
+    start_pause_b.addEventListener("click", function() {
         if (interval === null) {
             interval = setInterval(update, 1000 / FPS);
         } else {
@@ -25,15 +32,32 @@ function main() {
             interval = null;
         }
     });
+    rewind_b.addEventListener("click", function() {
+        if (interval) {
+            clearInterval(interval);
+            interval = null;
+        }
+        if (!history_position) {
+            history_position = history.length - 1;
+        }
+        history_position -= 1;
+        draw_canvas();
+        state = history.pop();
+        balls = state;
+        state.forEach(draw_balls);
+    });
 }
 
 function update() {
-    context.fillStyle = "black";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    draw_canvas();
     balls.forEach(draw_balls);
     balls.sort((a, b) => a[0][0] - b[0][0]);
     collision_manager();
     balls.map(mutate_ball);
+    history.push(structuredClone(balls));
+    if (history.length === 1000) {
+        history.shift();
+    }
 }
 
 function collision_manager() {
@@ -53,7 +77,7 @@ function collect_x_intersection() {
     let intersections = [];
     let inter_i = 0;
 
-    balls.forEach(function (ball, index) {
+    balls.forEach(function(ball, index) {
         if (!intersections[inter_i]) {
             intersections[inter_i] = [];
         }
@@ -78,8 +102,8 @@ function collect_x_intersection() {
 //https://www.youtube.com/watch?v=f1zLSpzCh9E
 function examine_x_intersections(x_intersections) {
     let coll_return = [];
-    x_intersections.forEach(function (x_inters_sub) {
-        x_inters_sub.forEach(function (key, index, sub_arr) {
+    x_intersections.forEach(function(x_inters_sub) {
+        x_inters_sub.forEach(function(key, index, sub_arr) {
             for (let i = index + 1; i < sub_arr.length; i++) {
                 let key2 = sub_arr[i];
                 if (balls[key2]) {
@@ -113,7 +137,7 @@ function verify_collision(ball1, ball2) {
 
 // https://www.vobarian.com/collisions/2dcollisions2.pdf
 function resolve_collision(coll_in) {
-    coll_in.forEach(function (coll) {
+    coll_in.forEach(function(coll) {
         const b1 = balls[coll[0]];
         const b1v0 = b1[1];
         const b1m = b1[2][0];
@@ -163,6 +187,11 @@ function mutate_ball(ball) {
     ball[0] = [bx, by];
     ball[1] = [xv, yv];
     return ball;
+}
+
+function draw_canvas() {
+    context.fillStyle = "black";
+    context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function draw_balls(ball) {
