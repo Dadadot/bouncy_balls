@@ -218,10 +218,14 @@ function create_balls() {
 function rand_color() {
     let rgb = [];
     for (let i = 0; i < 3; i++) {
+        //create random Hex string for each r/g/b
         rgb.push(Math.floor(Math.random() * 256).toString(16));
     }
+    //make every color string 2 symbols long
     rgb = rgb.map((val) => ("0" + val).slice(-2));
+    //adds # to the front
     rgb.splice(0, 0, "#");
+    //returns array as string
     return rgb.join("");
 }
 

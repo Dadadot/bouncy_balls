@@ -1,0 +1,19 @@
+@media screen {
+    .side-nav {
+        height: 100%;
+        width: 10rem;
+        position: fixed;
+        z-index: 1; /* Stay on top */
+        top: 0;
+        left: 0;
+        overflow-x: auto;
+    }
+    .side-nav-list {
+        margin-top: 0.5rem;
+        list-style-type: none;
+    }
+
+    .side-nav-list-entry {
+        margin-bottom: 0.5rem;
+    }
+}

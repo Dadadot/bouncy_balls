@@ -1,0 +1,10 @@
+@media screen {
+    canvas {
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 10rem;
+        /* margin-right: auto; */
+        display: block;
+        transform: scale(1, -1);
+    }
+}
