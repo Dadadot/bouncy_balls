@@ -1,7 +1,6 @@
 const FPS = 60;
 const bs_max = 30;
 const bs_min = 5;
-const ball_count = 20;
 const speed_max = 1;
 const speed_min = 0.2;
 const grav = 0.05;
@@ -10,10 +9,12 @@ const one_frame_back_b = document.querySelector("#one_frame_back");
 const one_frame_forward_b = document.querySelector("#one_frame_forward");
 const five_frames_back_b = document.querySelector("#five_frames_back");
 const five_frames_forward_b = document.querySelector("#five_frames_forward");
+const reload_b = document.querySelector("#reload");
 const canvas = document.getElementById("gameCanvas");
 const c_width = canvas.width;
 const c_height = canvas.height;
 const context = canvas.getContext("2d");
+let ball_count = document.getElementById("ball_amount").value;
 let history = [];
 let balls = [];
 let interval = null;
@@ -21,7 +22,6 @@ let interval = null;
 function main() {
     create_balls();
     update();
-    console.log(balls);
     start_pause_b.addEventListener("click", function() {
         if (interval === null) {
             interval = setInterval(update, 1000 / FPS);
@@ -31,20 +31,28 @@ function main() {
         }
     });
 
-    one_frame_forward_b.addEventListener("click", function() {forward(1);});
-    five_frames_forward_b.addEventListener("click", function() {forward(5);});
-    one_frame_back_b.addEventListener("click", function() {backward(1);});
-    five_frames_back_b.addEventListener("click", function() {backward(5);});
+    one_frame_forward_b.addEventListener("click", function() { forward(1); });
+    five_frames_forward_b.addEventListener("click", function() { forward(5); });
+    one_frame_back_b.addEventListener("click", function() { backward(1); });
+    five_frames_back_b.addEventListener("click", function() { backward(5); });
+    reload_b.addEventListener("click", reload);
 
 }
 
+function reload() {
+    pause();
+    ball_count = document.getElementById("ball_amount").value;
+    if (ball_count > 100) {ball_count = 100};
+    history = [];
+    balls = [];
+    create_balls();
+    update();
+}
+
+
 function backward(frames) {
-    console.log("here");
     let state = null;
-    if (interval) {
-        clearInterval(interval);
-        interval = null;
-    }
+    pause();
     for (let i = 0; i < frames; i++) {
         state = history.pop();
         if (balls.every((ball, index) => ball[0][1] === state[index][0][1])) {
@@ -57,10 +65,7 @@ function backward(frames) {
 }
 
 function forward(frames) {
-    if (interval) {
-        clearInterval(interval);
-        interval = null;
-    }
+    pause();
     for (let i = 0; i < frames; i++) {
         update();
     }
@@ -76,6 +81,14 @@ function update() {
     if (history.length === 1000) {
         history.shift();
     }
+}
+
+function pause() {
+    if (interval) {
+        clearInterval(interval);
+        interval = null;
+    }
+
 }
 
 function collision_manager() {

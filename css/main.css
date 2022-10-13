@@ -13,6 +13,7 @@
     }
      
     html {
+        color: white;
         background-color: var(--dark_primary);
     }
 
