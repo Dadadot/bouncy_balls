@@ -6,16 +6,14 @@ const speed_max = 1;
 const speed_min = 0.2;
 const grav = 0.05;
 const start_pause_b = document.querySelector("#ss_button");
-const rewind_b = document.querySelector("#rewind");
-const forward_b = document.querySelector("#forward");
 const one_frame_back_b = document.querySelector("#one_frame_back");
 const one_frame_forward_b = document.querySelector("#one_frame_forward");
+const five_frames_back_b = document.querySelector("#five_frames_back");
+const five_frames_forward_b = document.querySelector("#five_frames_forward");
 const canvas = document.getElementById("gameCanvas");
 const c_width = canvas.width;
 const c_height = canvas.height;
 const context = canvas.getContext("2d");
-let history_position = false;
-let state = null;
 let history = [];
 let balls = [];
 let interval = null;
@@ -32,28 +30,48 @@ function main() {
             interval = null;
         }
     });
-    rewind_b.addEventListener("click", function() {
-        if (interval) {
-            clearInterval(interval);
-            interval = null;
-        }
-        if (!history_position) {
-            history_position = history.length - 1;
-        }
-        history_position -= 1;
-        draw_canvas();
+
+    one_frame_forward_b.addEventListener("click", function() {forward(1);});
+    five_frames_forward_b.addEventListener("click", function() {forward(5);});
+    one_frame_back_b.addEventListener("click", function() {backward(1);});
+    five_frames_back_b.addEventListener("click", function() {backward(5);});
+
+}
+
+function backward(frames) {
+    console.log("here");
+    let state = null;
+    if (interval) {
+        clearInterval(interval);
+        interval = null;
+    }
+    for (let i = 0; i < frames; i++) {
         state = history.pop();
-        balls = state;
-        state.forEach(draw_balls);
-    });
+        if (balls.every((ball, index) => ball[0][1] === state[index][0][1])) {
+            state = history.pop();
+        }
+    }
+    balls = state;
+    draw_canvas();
+    state.forEach(draw_balls);
+}
+
+function forward(frames) {
+    if (interval) {
+        clearInterval(interval);
+        interval = null;
+    }
+    for (let i = 0; i < frames; i++) {
+        update();
+    }
 }
 
 function update() {
+    balls.map(mutate_ball);
     draw_canvas();
     balls.forEach(draw_balls);
     balls.sort((a, b) => a[0][0] - b[0][0]);
     collision_manager();
-    balls.map(mutate_ball);
     history.push(structuredClone(balls));
     if (history.length === 1000) {
         history.shift();

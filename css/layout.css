@@ -4,17 +4,50 @@
         width: 10rem;
         position: fixed;
         z-index: 1; /* Stay on top */
-        top: 0;
         left: 0;
+        margin-left: -1rem;
         overflow-x: auto;
         text-align: center;
     }
-    .side-nav-list {
+    .side-nav-entry {
         margin-top: 0.5rem;
         margin-left: 0;
         padding-left: 0;
         list-style-type: none;
     }
+    .side-nav-grid-block {
+        display: grid;
+        width: 10rem;
+        grid-template-columns: auto auto auto auto;
+        grid-template-rows: auto auto;
+
+    }
+
+    .start_pause {
+        grid-column: col1 / span 4;
+        grid-row: row 1;
+    }
+
+    .ffb {
+        grid-column: col 1;
+        grid-row: row 2;
+    }
+
+    .ofb {
+        grid-column: col 2;
+        grid-row: row 2;
+    }
+
+    .off {
+        grid-column: col 3;
+        grid-row: row 2;
+    }
+
+    .fff {
+        grid-column: col 4;
+        grid-row: row 2;
+    }
+
 
     .side-nav-list-entry {
         margin-bottom: 0.5rem;
