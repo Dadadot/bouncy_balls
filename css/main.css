@@ -4,8 +4,20 @@
         font-size: 1rem;
     }
 
+    :root {
+        font-size: 16;
+        --light_primary: #516082;
+        --light_secondary: #333d52;
+        --dark_primary: #12161f;
+        --dark_secondary: #212836;
+    }
+     
     html {
-        box-sizing: border-box;
+        background-color: var(--dark_primary);
+    }
+
+    body {
+        margin: 0;
     }
     *,
     *:before,

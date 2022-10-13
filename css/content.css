@@ -2,8 +2,9 @@
     canvas {
         padding-left: 0;
         padding-right: 0;
+        border-top: 3px solid var(--dark_secondary);
+        border-right: 3px solid var(--dark_secondary);
         margin-left: 10rem;
-        /* margin-right: auto; */
         display: block;
         transform: scale(1, -1);
     }

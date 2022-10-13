@@ -208,7 +208,7 @@ function mutate_ball(ball) {
 }
 
 function draw_canvas() {
-    context.fillStyle = "black";
+    context.fillStyle = "#12161f";
     context.fillRect(0, 0, canvas.width, canvas.height);
 }
 
