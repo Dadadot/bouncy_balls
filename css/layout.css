@@ -5,7 +5,7 @@
         height: 100vh;
         width: 10rem;
         position: fixed;
-        background-color: var(--dark_secondary);
+        background-color: var(--dark_blue_primary);
         z-index: 1; /* Stay on top */
         /* left: 0; */
         text-align: center;
@@ -23,9 +23,19 @@
     }
     body button {
         color: white;
-        border-color: var(--light_primary);
-        background-color: var(--light_secondary);
+        box-shadow: 0 0 3px var(--dark_blue_secondary); 
+        border: 1px solid var(--dark_blue_secondary) ;
         border-radius: 0.35rem;
+        background-color: var(--light_blue_secondary);
+    }
+    body button:hover {
+        border: 1px solid var(--dark_blue_primary) ;
+        background-color: var(--light_blue_primary);
+    }
+    body button:active {
+        background-color: var(--light_blue_primary);
+        transform: translateY(1px);
+        box-shadow: 0 0 px 0 var(--dark_blue_secondary); 
     }
     .start_pause {
         grid-column: col 1 / span 2;

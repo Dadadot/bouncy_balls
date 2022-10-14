@@ -42,7 +42,7 @@ function main() {
 function reload() {
     pause();
     ball_count = document.getElementById("ball_amount").value;
-    if (ball_count > 100) {ball_count = 100};
+    if (ball_count > 100) { ball_count = 100 };
     history = [];
     balls = [];
     create_balls();
