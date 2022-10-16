@@ -2,9 +2,10 @@
     canvas {
         padding-left: 0;
         padding-right: 0;
+        height: 100%;
         border-top: 3px solid var(--dark_blue_primary);
         border-right: 3px solid var(--dark_blue_primary);
-        margin-left: 10rem;
+        /* margin-left: 10rem; */
         display: block;
         transform: scale(1, -1);
     }

@@ -4,6 +4,7 @@ const bs_min = 5;
 const speed_max = 1;
 const speed_min = 0.2;
 const grav = 0.05;
+const error_margin = 2;
 const start_pause_b = document.querySelector("#ss_button");
 const one_frame_back_b = document.querySelector("#one_frame_back");
 const one_frame_forward_b = document.querySelector("#one_frame_forward");
@@ -22,21 +23,23 @@ let interval = null;
 function main() {
     create_balls();
     update();
-    start_pause_b.addEventListener("click", function() {
-        if (interval === null) {
-            interval = setInterval(update, 1000 / FPS);
-        } else {
-            clearInterval(interval);
-            interval = null;
-        }
-    });
-
+    start_pause_b.addEventListener("click", start_pause);
     one_frame_forward_b.addEventListener("click", function() { forward(1); });
-    five_frames_forward_b.addEventListener("click", function() { forward(5); });
+    five_frames_forward_b.addEventListener("click", function() { forward(10); });
     one_frame_back_b.addEventListener("click", function() { backward(1); });
-    five_frames_back_b.addEventListener("click", function() { backward(5); });
+    five_frames_back_b.addEventListener("click", function() { backward(10); });
     reload_b.addEventListener("click", reload);
+}
 
+// button event functions
+
+function start_pause() {
+    if (interval === null) {
+        interval = setInterval(update, 1000 / FPS);
+    } else {
+        clearInterval(interval);
+        interval = null;
+    }
 }
 
 function reload() {
@@ -49,12 +52,13 @@ function reload() {
     update();
 }
 
-
 function backward(frames) {
-    let state = null;
     pause();
+    let state = null;
     for (let i = 0; i < frames; i++) {
         state = history.pop();
+        // when coming from forward the first popped frame is the current board
+        // state. So pop again
         if (balls.every((ball, index) => ball[0][1] === state[index][0][1])) {
             state = history.pop();
         }
@@ -91,6 +95,8 @@ function pause() {
 
 }
 
+// collision related functions
+
 function collision_manager() {
     let collisions, x_intersections;
     x_intersections = collect_x_intersection();
@@ -104,6 +110,8 @@ function collision_manager() {
     }
 }
 
+// check which balls intersect at x to further examine via manager
+// reduces total amount of checks needed
 function collect_x_intersection() {
     let intersections = [];
     let inter_i = 0;
@@ -122,7 +130,7 @@ function collect_x_intersection() {
         const b2s = balls[index + 1][2][0];
         const max_dist = b1s + b2s;
         const dist = Math.abs(b1x - b2x);
-        if (!(dist >= 0 && dist <= max_dist * 2)) {
+        if (!(dist >= 0 && dist <= max_dist + error_margin)) {
             inter_i += 1;
         }
     });
@@ -131,6 +139,7 @@ function collect_x_intersection() {
 }
 
 //https://www.youtube.com/watch?v=f1zLSpzCh9E
+//i heard you like arrays
 function examine_x_intersections(x_intersections) {
     let coll_return = [];
     x_intersections.forEach(function(x_inters_sub) {
@@ -160,13 +169,14 @@ function verify_collision(ball1, ball2) {
     const b2s = ball2[2][0];
     const max_dist = b1s + b2s;
     const dist = Math.sqrt((b1x - b2x) ** 2 + (b1y - b2y) ** 2);
-    if (dist >= 0 && dist <= max_dist - 1) {
+    if (dist >= 0 && dist <= max_dist + error_margin) {
         return true;
     }
     return false;
 }
 
 // https://www.vobarian.com/collisions/2dcollisions2.pdf
+// the above with some additions from myself (the ugly bits)
 function resolve_collision(coll_in) {
     coll_in.forEach(function(coll) {
         const b1 = balls[coll[0]];
@@ -175,8 +185,30 @@ function resolve_collision(coll_in) {
         const b2 = balls[coll[1]];
         const b2v0 = b2[1];
         const b2m = b2[2][0];
-        const normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
-        const normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
+        let normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
+        let normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
+        //if balls are overlapping push them apart along the normal vector
+        //(or something like that)
+        //seems to work, no clue if that's the correct way to do it
+        if (normal_magnitute < b1[2][0] + b2[2][0]) {
+            let diff = b1[2][0] + b2[2][0] - normal_magnitute + (error_margin * 2);
+            if (b1[0][0] > b2[0][0]) {
+                b1[0][0] += diff / 4
+                b2[0][0] -= diff / 4
+            } else {
+                b1[0][0] -= diff / 4
+                b2[0][0] += diff / 4
+            }
+            if (b1[0][1] > b2[0][1]) {
+                b1[0][1] += diff / 4
+                b2[0][1] -= diff / 4
+            } else {
+                b1[0][1] -= diff / 4
+                b2[0][1] += diff / 4
+            }
+        }
+        normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
+        normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
         const un = normal.map((val) => val / normal_magnitute);
         const ut = [-un[1], un[0]];
         const b1vn0 = un[0] * b1v0[0] + un[1] * b1v0[1];
@@ -196,47 +228,7 @@ function resolve_collision(coll_in) {
     });
 }
 
-function mutate_ball(ball) {
-    let [bx, by] = ball[0];
-    let [xv, yv] = ball[1];
-    const bs = ball[2][0];
-    yv -= grav;
-    bx = bx + xv;
-    by = by + yv;
-    if (bx - bs < 0 && xv < 0) {
-        xv = -xv;
-    }
-    if (bx + bs > canvas.width && xv > 0) {
-        xv = -xv;
-    }
-    if (by - bs < 0 && yv < 0) {
-        yv = -(yv - grav);
-    }
-    if (by + bs > canvas.height && yv > 0) {
-        yv = -yv;
-    }
-    ball[0] = [bx, by];
-    ball[1] = [xv, yv];
-    return ball;
-}
-
-function draw_canvas() {
-    context.fillStyle = "#12161f";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-function draw_balls(ball) {
-    let [bx, by] = ball[0];
-    let color = ball[2][1];
-    let bs = ball[2][0];
-    context.beginPath();
-    context.fillStyle = color;
-    context.arc(bx, by, bs, 0, 2 * Math.PI, false);
-    context.fill();
-    // context.fillStyle = "red";
-    // context.textAlign = "center";
-    // context.fillText("", bx, by);
-}
+// misc functions 
 
 function create_balls() {
     for (let i = 0; i < ball_count; i++) {
@@ -287,6 +279,48 @@ function rand_color() {
     rgb.splice(0, 0, "#");
     //returns array as string
     return rgb.join("");
+}
+
+function mutate_ball(ball) {
+    let [bx, by] = ball[0];
+    let [xv, yv] = ball[1];
+    const bs = ball[2][0];
+    yv -= grav;
+    bx = bx + xv;
+    by = by + yv;
+    if (bx - bs < 0 && xv < 0) {
+        xv = -xv;
+    }
+    if (bx + bs > canvas.width && xv > 0) {
+        xv = -xv;
+    }
+    if (by - bs < 0 && yv < 0) {
+        yv = -(yv - grav);
+    }
+    if (by + bs > canvas.height && yv > 0) {
+        yv = -yv;
+    }
+    ball[0] = [bx, by];
+    ball[1] = [xv, yv];
+    return ball;
+}
+
+function draw_canvas() {
+    context.fillStyle = "#12161f";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function draw_balls(ball) {
+    let [bx, by] = ball[0];
+    let color = ball[2][1];
+    let bs = ball[2][0];
+    context.beginPath();
+    context.fillStyle = color;
+    context.arc(bx, by, bs, 0, 2 * Math.PI, false);
+    context.fill();
+    // context.fillStyle = "red";
+    // context.textAlign = "center";
+    // context.fillText("", bx, by);
 }
 
 main();
