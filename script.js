@@ -3,8 +3,8 @@ const bs_max = 30;
 const bs_min = 5;
 const speed_max = 1;
 const speed_min = 0.2;
-const grav = 0.05;
-const error_margin = 2;
+const grav = 0.0;
+const error_margin = 1;
 const start_pause_b = document.querySelector("#ss_button");
 const one_frame_back_b = document.querySelector("#one_frame_back");
 const one_frame_forward_b = document.querySelector("#one_frame_forward");
@@ -29,6 +29,18 @@ function main() {
     one_frame_back_b.addEventListener("click", function() { backward(1); });
     five_frames_back_b.addEventListener("click", function() { backward(10); });
     reload_b.addEventListener("click", reload);
+}
+
+function update() {
+    balls.map(mutate_ball);
+    draw_canvas();
+    balls.forEach(draw_balls);
+    balls.sort((a, b) => a[0][0] - b[0][0]);
+    collision_manager();
+    history.push(structuredClone(balls));
+    if (history.length === 1000) {
+        history.shift();
+    }
 }
 
 // button event functions
@@ -75,24 +87,11 @@ function forward(frames) {
     }
 }
 
-function update() {
-    balls.map(mutate_ball);
-    draw_canvas();
-    balls.forEach(draw_balls);
-    balls.sort((a, b) => a[0][0] - b[0][0]);
-    collision_manager();
-    history.push(structuredClone(balls));
-    if (history.length === 1000) {
-        history.shift();
-    }
-}
-
 function pause() {
     if (interval) {
         clearInterval(interval);
         interval = null;
     }
-
 }
 
 // collision related functions
@@ -181,30 +180,34 @@ function resolve_collision(coll_in) {
     coll_in.forEach(function(coll) {
         const b1 = balls[coll[0]];
         const b1v0 = b1[1];
-        const b1m = b1[2][0];
+        const b1m = b1[2][0] ** 2;
+        const b1s = b1[2][0];
         const b2 = balls[coll[1]];
         const b2v0 = b2[1];
-        const b2m = b2[2][0];
+        const b2m = b2[2][0] ** 2;
+        const b2s = b2[2][0];
         let normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
         let normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
         //if balls are overlapping push them apart along the normal vector
         //(or something like that)
         //seems to work, no clue if that's the correct way to do it
-        if (normal_magnitute < b1[2][0] + b2[2][0]) {
-            let diff = b1[2][0] + b2[2][0] - normal_magnitute + (error_margin * 2);
+        if (normal_magnitute < b1s + b2s + error_margin) {
+            let diff = b1s + b2s - normal_magnitute + (error_margin * 2.5);
+            let b1_rel = b1s / (b1s + b2s);
+            let b2_rel = b2s / (b1s + b2s);
             if (b1[0][0] > b2[0][0]) {
-                b1[0][0] += diff / 4
-                b2[0][0] -= diff / 4
+                b1[0][0] += diff * b2_rel / 2;
+                b2[0][0] -= diff * b1_rel / 2;
             } else {
-                b1[0][0] -= diff / 4
-                b2[0][0] += diff / 4
+                b1[0][0] -= diff * b2_rel / 2;
+                b2[0][0] += diff * b1_rel / 2;
             }
             if (b1[0][1] > b2[0][1]) {
-                b1[0][1] += diff / 4
-                b2[0][1] -= diff / 4
+                b1[0][1] += diff * b2_rel / 2;
+                b2[0][1] -= diff * b1_rel / 2;
             } else {
-                b1[0][1] -= diff / 4
-                b2[0][1] += diff / 4
+                b1[0][1] -= diff * b2_rel / 2;
+                b2[0][1] += diff * b1_rel / 2;
             }
         }
         normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
