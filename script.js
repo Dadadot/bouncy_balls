@@ -44,7 +44,6 @@ function update() {
     }
 }
 
-
 // button event and related functions
 
 function start_pause() {
@@ -200,25 +199,25 @@ function resolve_collision(coll_in) {
         //(or something like that)
         //seems to work, no clue if that's the correct way to do it
         if (normal_magnitute < b1s + b2s + error_margin) {
-            let n_mag_tmp = normal_magnitute / (normal_magnitute - (b1s + b2s + error_margin * 2.5));
-            let normal_x_tmp = Math.abs(normal[0] / n_mag_tmp);
-            let normal_y_tmp = Math.abs(normal[1] / n_mag_tmp);
-            // let diff = b1s + b2s - normal_magnitute + (error_margin * 2.5);
-            // let b1_rel = b1s / (b1s + b2s);
-            // let b2_rel = b2s / (b1s + b2s);
+            let n_mag_tmp = (normal_magnitute - (b1s + b2s + error_margin * 2)) / normal_magnitute;
+            let normal_x_tmp = Math.abs(normal[0] * n_mag_tmp);
+            let normal_y_tmp = Math.abs(normal[1] * n_mag_tmp);
+            //pushed balls relative to their size(smaller -> further)
+            let b1_rel = b1s / (b1s + b2s);
+            let b2_rel = b2s / (b1s + b2s);
             if (b1[0][0] > b2[0][0]) {
-                b1[0][0] += normal_x_tmp / 2;
-                b2[0][0] -= normal_x_tmp / 2;
+                b1[0][0] += normal_x_tmp * b2_rel;
+                b2[0][0] -= normal_x_tmp * b1_rel;
             } else {
-                b1[0][0] -= normal_x_tmp / 2;
-                b2[0][0] += normal_x_tmp / 2;
+                b1[0][0] -= normal_x_tmp * b2_rel;
+                b2[0][0] += normal_x_tmp * b1_rel;
             }
             if (b1[0][1] > b2[0][1]) {
-                b1[0][1] += normal_y_tmp / 2;
-                b2[0][1] -= normal_y_tmp / 2;
+                b1[0][1] += normal_y_tmp * b2_rel;
+                b2[0][1] -= normal_y_tmp * b1_rel;
             } else {
-                b1[0][1] -= normal_y_tmp / 2;
-                b2[0][1] += normal_y_tmp / 2;
+                b1[0][1] -= normal_y_tmp * b2_rel;
+                b2[0][1] += normal_y_tmp * b1_rel;
             }
         }
         normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
