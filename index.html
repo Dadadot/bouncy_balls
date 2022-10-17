@@ -11,16 +11,16 @@
 
 <body>
     <header></header>
-    <nav></nav>
-    <main>
+    <nav>
         <div class="side-nav">
+            <p class="side-nav-indicator"> > </p>
             <div class="side-nav-entry side-nav-grid-block">
-                <div class="start_pause"><button type="button" id="ss_button">&#x23F5 &#x23F8 </button>
+                <div class="sngbe start_pause"><button type="button" id="ss_button">&#x23F5 &#x23F8 </button>
                 </div>
-                <div class="ofb"><button type="button" id="one_frame_back">&#60</button></div>
-                <div class="ffb"><button type="button" id="five_frames_back">&#60&#60</button></div>
-                <div class="off"><button type="button" id="one_frame_forward">&#62</button></div>
-                <div class="fff"><button type="button" id="five_frames_forward">&#62&#62</button></div>
+                <div class="sngbe ofb"><button type="button" id="one_frame_back">&#60</button></div>
+                <div class="sngbe ffb"><button type="button" id="five_frames_back">&#60&#60</button></div>
+                <div class="sngbe off"><button type="button" id="one_frame_forward">&#62</button></div>
+                <div class="sngbe fff"><button type="button" id="five_frames_forward">&#62&#62</button></div>
             </div>
             <div class="side-nav-entry">
                 <label>Amount of balls</label>
@@ -30,10 +30,10 @@
                 <label>Energy Loss</label>
                 <input type="text" class="side_nav_input" id="energy_loss" value="1.005" autocomplete="off">
             </div>
-            <div class="side-nav-entry">
-                <button type="button" id="reload">Reload</button>
-            </div>
+            <button class="side-nav-entry" type="button" id="reload">Reload</button>
         </div>
+    </nav>
+    <main>
         <canvas id="gameCanvas" class="gameCanvas" width="800" height="600"></canvas>
     </main>
     <footer></footer>

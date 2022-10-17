@@ -1,8 +1,6 @@
 @media screen {
     canvas {
-        padding-left: 0;
-        padding-right: 0;
-        height: 100%;
+        /* margin-left: 2rem; */
         border-top: 3px solid var(--dark_blue_primary);
         border-right: 3px solid var(--dark_blue_primary);
         /* margin-left: 10rem; */

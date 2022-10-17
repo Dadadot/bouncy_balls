@@ -23,7 +23,8 @@ let interval = null;
 
 function main() {
     create_balls();
-    update();
+    draw_canvas();
+    balls.forEach(draw_balls);
     start_pause_b.addEventListener("click", start_pause);
     one_frame_forward_b.addEventListener("click", function() { forward(1); });
     five_frames_forward_b.addEventListener("click", function() { forward(10); });
@@ -34,11 +35,11 @@ function main() {
 
 function update() {
     balls.map(mutate_ball);
-    draw_canvas();
-    balls.forEach(draw_balls);
     balls.sort((a, b) => a[0][0] - b[0][0]);
     collision_manager();
     history.push(structuredClone(balls));
+    draw_canvas();
+    balls.forEach(draw_balls);
     if (history.length === 1000) {
         history.shift();
     }
@@ -62,7 +63,8 @@ function reload() {
     history = [];
     balls = [];
     create_balls();
-    update();
+    draw_canvas();
+    balls.forEach(draw_balls);
 }
 
 function read_input_values() {
@@ -199,10 +201,10 @@ function resolve_collision(coll_in) {
         //(or something like that)
         //seems to work, no clue if that's the correct way to do it
         if (normal_magnitute < b1s + b2s + error_margin) {
-            let n_mag_tmp = (normal_magnitute - (b1s + b2s + error_margin * 2)) / normal_magnitute;
+            let n_mag_tmp = (normal_magnitute - (b1s + b2s + error_margin)) / normal_magnitute;
             let normal_x_tmp = Math.abs(normal[0] * n_mag_tmp);
             let normal_y_tmp = Math.abs(normal[1] * n_mag_tmp);
-            //pushed balls relative to their size(smaller -> further)
+            //pushes balls relative to their size(smaller -> further)
             let b1_rel = b1s / (b1s + b2s);
             let b2_rel = b2s / (b1s + b2s);
             if (b1[0][0] > b2[0][0]) {

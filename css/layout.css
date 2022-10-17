@@ -1,50 +1,81 @@
 @media screen {
     .side-nav {
-        display:flex;
+        display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
+        /* position: absolute; */
         margin: 0;
         padding: 0;
         height: 100vh;
-        width: 10rem;
+        width: 2rem;
         background-color: var(--dark_blue_primary);
         z-index: 1; /* Stay on top */
+        transition: all 200ms;
+    }
+    .side-nav:hover {
+        width: 10rem;
+    }
+    .side-nav:hover .side-nav-entry {
+        visibility: visible;
+        transition-property: visibility;
+        transition-delay: 200ms;
+    }
+    .side-nav:hover .sngbe {
+        visibility: visible;
+        opacity: 1;
+        transition-property: visibility, opacity;
+        transition-delay: 200ms;
+    }
+    .side-nav:hover .side-nav-indicator {
+        visibility: hidden;
+        transition-property: visibility;
+        transition-delay: 200ms;
     }
     .side-nav-entry {
+        display: block;
         margin-top: 0.5rem;
+        visibility: hidden;
+    }
+    .side-nav-indicator {
+        visibility: visible;
     }
     .side-nav-grid-block {
-        padding-top: 1rem;
         display: grid;
+        padding-top: 1rem;
         grid-gap: 5px;
         justify-content: center;
         align-items: center;
         width: 10rem;
     }
-    main {
-        display: flex;
-        /* flex-direction: column; */
+
+    .sngbe {
+        visibility: hidden;
+        opacity: 0;
     }
-    body button {
+    body {
+        display: flex;
+        flex-direction: row;
+    }
+    nav button {
         display: flex;
         color: white;
-        box-shadow: 0 0 3px var(--dark_blue_secondary); 
-        border: 1px solid var(--dark_blue_secondary) ;
+        box-shadow: 0 0 3px var(--dark_blue_secondary);
+        border: 1px solid var(--dark_blue_secondary);
         border-radius: 0.35rem;
         background-color: var(--light_blue_secondary);
         transition: all 50ms;
     }
-    body button:hover {
-        border: 1px solid var(--dark_blue_primary) ;
+    nav button:hover {
+        border: 1px solid var(--dark_blue_primary);
         background-color: var(--light_blue_primary);
         transform: scale(1.1);
-        box-shadow: 0 0 5px var(--dark_blue_secondary); 
+        box-shadow: 0 0 5px var(--dark_blue_secondary);
     }
-    body button:active {
+    nav button:active {
         background-color: var(--light_blue_primary);
         transform: scale(0.95);
-        box-shadow: 0 0 1px var(--dark_blue_secondary); 
+        box-shadow: 0 0 1px var(--dark_blue_secondary);
     }
     .start_pause {
         grid-column: col 1 / span 2;
