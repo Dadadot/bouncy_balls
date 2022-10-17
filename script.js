@@ -1,9 +1,8 @@
 const FPS = 60;
-const bs_max = 30;
-const bs_min = 5;
+const bs_max = 10;
+const bs_min = 4;
 const speed_max = 1;
 const speed_min = 0.2;
-const grav = 0.0;
 const error_margin = 1;
 const start_pause_b = document.querySelector("#ss_button");
 const one_frame_back_b = document.querySelector("#one_frame_back");
@@ -15,7 +14,9 @@ const canvas = document.getElementById("gameCanvas");
 const c_width = canvas.width;
 const c_height = canvas.height;
 const context = canvas.getContext("2d");
+let energy_loss = document.getElementById("energy_loss").value;
 let ball_count = document.getElementById("ball_amount").value;
+let grav = document.getElementById("gravity_amount").value;
 let history = [];
 let balls = [];
 let interval = null;
@@ -43,7 +44,8 @@ function update() {
     }
 }
 
-// button event functions
+
+// button event and related functions
 
 function start_pause() {
     if (interval === null) {
@@ -56,12 +58,18 @@ function start_pause() {
 
 function reload() {
     pause();
-    ball_count = document.getElementById("ball_amount").value;
-    if (ball_count > 100) { ball_count = 100 };
+    read_input_values();
+    if (ball_count > 1000) { ball_count = 1000 };
     history = [];
     balls = [];
     create_balls();
     update();
+}
+
+function read_input_values() {
+    ball_count = document.getElementById("ball_amount").value;
+    grav = document.getElementById("gravity_amount").value;
+    energy_loss = document.getElementById("energy_loss").value;
 }
 
 function backward(frames) {
@@ -192,26 +200,29 @@ function resolve_collision(coll_in) {
         //(or something like that)
         //seems to work, no clue if that's the correct way to do it
         if (normal_magnitute < b1s + b2s + error_margin) {
-            let diff = b1s + b2s - normal_magnitute + (error_margin * 2.5);
-            let b1_rel = b1s / (b1s + b2s);
-            let b2_rel = b2s / (b1s + b2s);
+            let n_mag_tmp = normal_magnitute / (normal_magnitute - (b1s + b2s + error_margin * 2.5));
+            let normal_x_tmp = Math.abs(normal[0] / n_mag_tmp);
+            let normal_y_tmp = Math.abs(normal[1] / n_mag_tmp);
+            // let diff = b1s + b2s - normal_magnitute + (error_margin * 2.5);
+            // let b1_rel = b1s / (b1s + b2s);
+            // let b2_rel = b2s / (b1s + b2s);
             if (b1[0][0] > b2[0][0]) {
-                b1[0][0] += diff * b2_rel / 2;
-                b2[0][0] -= diff * b1_rel / 2;
+                b1[0][0] += normal_x_tmp / 2;
+                b2[0][0] -= normal_x_tmp / 2;
             } else {
-                b1[0][0] -= diff * b2_rel / 2;
-                b2[0][0] += diff * b1_rel / 2;
+                b1[0][0] -= normal_x_tmp / 2;
+                b2[0][0] += normal_x_tmp / 2;
             }
             if (b1[0][1] > b2[0][1]) {
-                b1[0][1] += diff * b2_rel / 2;
-                b2[0][1] -= diff * b1_rel / 2;
+                b1[0][1] += normal_y_tmp / 2;
+                b2[0][1] -= normal_y_tmp / 2;
             } else {
-                b1[0][1] -= diff * b2_rel / 2;
-                b2[0][1] += diff * b1_rel / 2;
+                b1[0][1] -= normal_y_tmp / 2;
+                b2[0][1] += normal_y_tmp / 2;
             }
         }
         normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
-        normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
+        normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2) * energy_loss;
         const un = normal.map((val) => val / normal_magnitute);
         const ut = [-un[1], un[0]];
         const b1vn0 = un[0] * b1v0[0] + un[1] * b1v0[1];
@@ -298,7 +309,11 @@ function mutate_ball(ball) {
         xv = -xv;
     }
     if (by - bs < 0 && yv < 0) {
-        yv = -(yv - grav);
+        if (grav > 0) {
+            yv = -(yv - grav / energy_loss);
+        } else {
+            yv = -yv
+        }
     }
     if (by + bs > canvas.height && yv > 0) {
         yv = -yv;
