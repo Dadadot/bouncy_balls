@@ -26,13 +26,14 @@
     }
 
     body {
-        margin: 0;
+        display: flex;
+        flex-direction: row;
     }
-    *,
-    *:before,
-    *:after {
-        box-sizing: inherit;
-    }
+    /* *, */
+    /* *:before, */
+    /* *:after { */
+    /*     box-sizing: inherit; */
+    /* } */
 
     /* Avoid collapsing margins in these elements */
     h1,
@@ -86,27 +87,27 @@
         font-variant: small-caps;
     }
 
-    a:link {
-        color: #0b74b8;
-    }
-    a:visited {
-        color: #36aade;
-    }
-    a:hover,
-    a:focus {
-        color: #f5662e;
-    }
-    a:actice {
-        color: #d90000;
-    }
+    /* a:link { */
+    /*     color: #0b74b8; */
+    /* } */
+    /* a:visited { */
+    /*     color: #36aade; */
+    /* } */
+    /* a:hover, */
+    /* a:focus { */
+    /*     color: #f5662e; */
+    /* } */
+    /* a:actice { */
+    /*     color: #d90000; */
+    /* } */
 
-    address {
-        font-style: normal;
-    }
-    label {
-        display: block;
-    }
-    form div {
-        margin-bottom: 1em;
-    }
+    /* address { */
+    /*     font-style: normal; */
+    /* } */
+    /* label { */
+    /*     display: block; */
+    /* } */
+    /* form div { */
+    /*     margin-bottom: 1em; */
+    /* } */
 } /* end @media */

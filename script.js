@@ -1,6 +1,6 @@
 const FPS = 60;
 const bs_max = 10;
-const bs_min = 4;
+const bs_min = 3;
 const speed_max = 1;
 const speed_min = 0.2;
 const error_margin = 1;
@@ -189,41 +189,36 @@ function resolve_collision(coll_in) {
     coll_in.forEach(function(coll) {
         const b1 = balls[coll[0]];
         const b1v0 = b1[1];
-        const b1m = b1[2][0] ** 2;
+        const b1m = b1[2][0];
         const b1s = b1[2][0];
         const b2 = balls[coll[1]];
         const b2v0 = b2[1];
-        const b2m = b2[2][0] ** 2;
+        const b2m = b2[2][0];
         const b2s = b2[2][0];
         let normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
         let normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2);
-        //if balls are overlapping push them apart along the normal vector
-        //(or something like that)
-        //seems to work, no clue if that's the correct way to do it
+        // if (check_near_collision(b1, b2)) {
+        //     return;
+        // }
         if (normal_magnitute < b1s + b2s + error_margin) {
             let n_mag_tmp = (normal_magnitute - (b1s + b2s + error_margin)) / normal_magnitute;
             let normal_x_tmp = Math.abs(normal[0] * n_mag_tmp);
             let normal_y_tmp = Math.abs(normal[1] * n_mag_tmp);
-            //pushes balls relative to their size(smaller -> further)
-            let b1_rel = b1s / (b1s + b2s);
-            let b2_rel = b2s / (b1s + b2s);
             if (b1[0][0] > b2[0][0]) {
-                b1[0][0] += normal_x_tmp * b2_rel;
-                b2[0][0] -= normal_x_tmp * b1_rel;
+                b1[0][0] += normal_x_tmp / 2;
+                b2[0][0] -= normal_x_tmp / 2;
             } else {
-                b1[0][0] -= normal_x_tmp * b2_rel;
-                b2[0][0] += normal_x_tmp * b1_rel;
+                b1[0][0] -= normal_x_tmp / 2;
+                b2[0][0] += normal_x_tmp / 2;
             }
             if (b1[0][1] > b2[0][1]) {
-                b1[0][1] += normal_y_tmp * b2_rel;
-                b2[0][1] -= normal_y_tmp * b1_rel;
+                b1[0][1] += normal_y_tmp / 2;
+                b2[0][1] -= normal_y_tmp / 2;
             } else {
-                b1[0][1] -= normal_y_tmp * b2_rel;
-                b2[0][1] += normal_y_tmp * b1_rel;
+                b1[0][1] -= normal_y_tmp / 2;
+                b2[0][1] += normal_y_tmp / 2;
             }
         }
-        normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
-        normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2) * energy_loss;
         const un = normal.map((val) => val / normal_magnitute);
         const ut = [-un[1], un[0]];
         const b1vn0 = un[0] * b1v0[0] + un[1] * b1v0[1];
@@ -240,6 +235,11 @@ function resolve_collision(coll_in) {
         b2vt1 = ut.map((val) => val * b2vt1);
         b1[1] = b1vn1.map((val, i) => val + b1vt1[i]);
         b2[1] = b2vn1.map((val, i) => val + b2vt1[i]);
+        //if balls are overlapping push them apart along the normal vector
+        //(or something like that)
+        //seems to work, no clue if that's the correct way to do it
+        // normal = [b1[0][0] - b2[0][0], b1[0][1] - b2[0][1]];
+        // normal_magnitute = Math.sqrt(normal[0] ** 2 + normal[1] ** 2) * energy_loss;
     });
 }
 

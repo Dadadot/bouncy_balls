@@ -11,35 +11,28 @@
         width: 2rem;
         background-color: var(--dark_blue_primary);
         z-index: 1; /* Stay on top */
-        transition: all 200ms;
+        transition-property: width;
+        transition: width 200ms;
+        transition-delay: 1s;
     }
-    .side-nav:hover {
-        width: 10rem;
-    }
-    .side-nav:hover .side-nav-entry {
-        visibility: visible;
-        transition-property: visibility;
-        transition-delay: 200ms;
-    }
-    .side-nav:hover .sngbe {
-        visibility: visible;
-        opacity: 1;
-        transition-property: visibility, opacity;
-        transition-delay: 200ms;
-    }
-    .side-nav:hover .side-nav-indicator {
-        visibility: hidden;
-        transition-property: visibility;
-        transition-delay: 200ms;
-    }
+
     .side-nav-entry {
         display: block;
         margin-top: 0.5rem;
         visibility: hidden;
+        opacity: 0;
+        transition-delay: 1s;
     }
+
     .side-nav-indicator {
         visibility: visible;
+        transition-delay: 1s;
     }
+
+    .side-nav-input {
+        width: 80%;
+    }
+
     .side-nav-grid-block {
         display: grid;
         padding-top: 1rem;
@@ -49,14 +42,29 @@
         width: 10rem;
     }
 
-    .sngbe {
+    .side-nav:hover {
+        width: 10rem;
+        transition: all 200ms;
+    }
+
+    .side-nav:unhover {
+        transition-delay: 1s;
+    }
+
+    .side-nav:hover .side-nav-entry {
+        visibility: visible;
+        opacity: 1;
+        transition-property: visibility, opacity;
+        transition: visibility 0.3s, opacity 0.3s linear;
+        transition-delay: 200ms;
+    }
+
+    .side-nav:hover .side-nav-indicator {
         visibility: hidden;
-        opacity: 0;
+        transition-property: visibility;
+        transition-delay: 200ms;
     }
-    body {
-        display: flex;
-        flex-direction: row;
-    }
+
     nav button {
         display: flex;
         color: white;
@@ -66,17 +74,20 @@
         background-color: var(--light_blue_secondary);
         transition: all 50ms;
     }
+
     nav button:hover {
         border: 1px solid var(--dark_blue_primary);
         background-color: var(--light_blue_primary);
         transform: scale(1.1);
         box-shadow: 0 0 5px var(--dark_blue_secondary);
     }
+    
     nav button:active {
         background-color: var(--light_blue_primary);
         transform: scale(0.95);
         box-shadow: 0 0 1px var(--dark_blue_secondary);
     }
+
     .start_pause {
         grid-column: col 1 / span 2;
         grid-row: row 0;
@@ -101,7 +112,9 @@
         grid-column: col 3;
         grid-row: row 1;
     }
+
     .side_nav_input {
         width: 80%;
     }
+
 }

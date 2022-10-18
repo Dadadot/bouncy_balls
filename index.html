@@ -14,22 +14,20 @@
     <nav>
         <div class="side-nav">
             <p class="side-nav-indicator"> > </p>
-            <div class="side-nav-entry side-nav-grid-block">
-                <div class="sngbe start_pause"><button type="button" id="ss_button">&#x23F5 &#x23F8 </button>
+            <div class="side-nav-grid-block side-nav-entry">
+                <div class="start_pause"><button type="button" id="ss_button">&#x23F5 &#x23F8 </button>
                 </div>
-                <div class="sngbe ofb"><button type="button" id="one_frame_back">&#60</button></div>
-                <div class="sngbe ffb"><button type="button" id="five_frames_back">&#60&#60</button></div>
-                <div class="sngbe off"><button type="button" id="one_frame_forward">&#62</button></div>
-                <div class="sngbe fff"><button type="button" id="five_frames_forward">&#62&#62</button></div>
+                <div class="ofb"><button type="button" id="one_frame_back">&#60</button></div>
+                <div class="ffb"><button type="button" id="five_frames_back">&#60&#60</button></div>
+                <div class="off"><button type="button" id="one_frame_forward">&#62</button></div>
+                <div class="fff"><button type="button" id="five_frames_forward">&#62&#62</button></div>
             </div>
-            <div class="side-nav-entry">
-                <label>Amount of balls</label>
-                <input type="text" class="side_nav_input" id="ball_amount" value="200" autocomplete="off">
-                <label>Gravity</label>
-                <input type="text" class="side_nav_input" id="gravity_amount" value="0.01" autocomplete="off">
-                <label>Energy Loss</label>
-                <input type="text" class="side_nav_input" id="energy_loss" value="1.005" autocomplete="off">
-            </div>
+            <label class="side-nav-entry">Amount of balls</label>
+            <input type="text" class="side-nav-entry side-nav-input" id="ball_amount" value="500" autocomplete="off">
+            <label class="side-nav-entry">Gravity</label>
+            <input type="text" class="side-nav-entry side-nav-input" id="gravity_amount" value="0.0" autocomplete="off">
+            <label class="side-nav-entry">Energy Loss</label>
+            <input type="text" class="side-nav-entry side-nav-input" id="energy_loss" value="1.00" autocomplete="off">
             <button class="side-nav-entry" type="button" id="reload">Reload</button>
         </div>
     </nav>
