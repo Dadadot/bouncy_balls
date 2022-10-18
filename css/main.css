@@ -16,19 +16,18 @@
         --brown_primary: #524833;
 
         /* Reds */
-        --red_primary: #523833;
-
+        --red_primary: #8f3833;
     }
-     
+
     html {
         color: white;
         background-color: var(--dark_blue_secondary);
     }
-
     body {
-        display: flex;
-        flex-direction: row;
+        margin: 0;
+        padding: 0;
     }
+
     /* *, */
     /* *:before, */
     /* *:after { */

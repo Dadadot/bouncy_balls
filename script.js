@@ -14,9 +14,12 @@ const canvas = document.getElementById("gameCanvas");
 const c_width = canvas.width;
 const c_height = canvas.height;
 const context = canvas.getContext("2d");
-let energy_loss = document.getElementById("energy_loss").value;
 let ball_count = document.getElementById("ball_amount").value;
+let energy_loss = document.getElementById("energy_loss").value;
 let grav = document.getElementById("gravity_amount").value;
+
+
+
 let history = [];
 let balls = [];
 let interval = null;
@@ -34,6 +37,7 @@ function main() {
 }
 
 function update() {
+    read_dyn_values()
     balls.map(mutate_ball);
     balls.sort((a, b) => a[0][0] - b[0][0]);
     collision_manager();
@@ -43,6 +47,11 @@ function update() {
     if (history.length === 1000) {
         history.shift();
     }
+}
+
+function read_dyn_values() {
+    grav = document.getElementById("gravity_amount").value;
+    energy_loss = document.getElementById("energy_loss").value;
 }
 
 // button event and related functions
@@ -58,7 +67,7 @@ function start_pause() {
 
 function reload() {
     pause();
-    read_input_values();
+    read_reload_values();
     if (ball_count > 1000) { ball_count = 1000 };
     history = [];
     balls = [];
@@ -67,10 +76,8 @@ function reload() {
     balls.forEach(draw_balls);
 }
 
-function read_input_values() {
+function read_reload_values() {
     ball_count = document.getElementById("ball_amount").value;
-    grav = document.getElementById("gravity_amount").value;
-    energy_loss = document.getElementById("energy_loss").value;
 }
 
 function backward(frames) {
@@ -219,6 +226,7 @@ function resolve_collision(coll_in) {
                 b2[0][1] += normal_y_tmp / 2;
             }
         }
+        normal_magnitute *= energy_loss;
         const un = normal.map((val) => val / normal_magnitute);
         const ut = [-un[1], un[0]];
         const b1vn0 = un[0] * b1v0[0] + un[1] * b1v0[1];
