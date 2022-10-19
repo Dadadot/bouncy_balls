@@ -25,14 +25,17 @@
                     <div class="off"><button type="button" id="one_frame_forward">&#62</button></div>
                     <div class="fff"><button type="button" id="five_frames_forward">&#62&#62</button></div>
                 </div>
+                <hr class="side-nav-entry side-nav-seperator">
                 <label class="side-nav-entry">Gravity</label>
                 <input type="range" class="side-nav-entry side-nav-slider" id="gravity_amount" max="0.1" min="0" step="0.0001" value="0">
                 <label class="side-nav-entry">Energy Loss</label>
                 <input type="range" class="side-nav-entry side-nav-slider" id="energy_loss" max="1.1" min="1" step="0.0001" value="1">
+                <hr class="side-nav-entry side-nav-seperator">
                 <label class="side-nav-entry">Amount of balls</label>
                 <input type="text" class="side-nav-entry side-nav-input" id="ball_amount" value="300"
                     autocomplete="off">
                 <button class="side-nav-entry" type="button" id="reload">Reload</button>
+                <p class="side-nav-indicator side-nav-indicator-bottom"> > </p>
             </div>
             <div class="canvas-rapper">
                 <canvas id="gameCanvas" class="gameCanvas" width="800" height="600"></canvas>
